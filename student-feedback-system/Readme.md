@@ -236,7 +236,3 @@ Each service has its own API documentation available at:
 - Course Service: http://localhost:3002/api-docs
 - Feedback Service: http://localhost:3003/api-docs
 - Admin Service: http://localhost:3004/api-docs
-
-## License
-
-MIT
