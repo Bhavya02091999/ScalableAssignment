@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+  labels:
+    app: admin-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+    spec:
+      containers:
+      - name: admin-service
+        image: admin-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3004
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: PORT
+          value: "3004"
+        - name: NEXT_PUBLIC_SUPABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: supabase-credentials
+              key: supabase-url
+        - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+          valueFrom:
+            secretKeyRef:
+              name: supabase-credentials
+              key: supabase-anon-key
+        - name: NEXT_PUBLIC_AUTH_SERVICE_URL
+          value: "http://auth-service"
+        - name: NEXT_PUBLIC_COURSE_SERVICE_URL
+          value: "http://course-service"
+        - name: NEXT_PUBLIC_FEEDBACK_SERVICE_URL
+          value: "http://feedback-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+spec:
+  selector:
+    app: admin-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3004
+  type: ClusterIP
